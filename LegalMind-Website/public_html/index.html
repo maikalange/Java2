@@ -1,0 +1,73 @@
+<html>
+    <head>
+        <title>Solr Ajax Example</title>
+        <script language="Javascript">
+        // derived from http://www.degraeve.com/reference/simple-ajax-example.php
+            function xmlhttpPost(strURL) {
+                var xmlHttpReq = false;
+                var self = this;
+                if (window.XMLHttpRequest) { // Mozilla/Safari
+                    self.xmlHttpReq = new XMLHttpRequest();
+                } else if (window.ActiveXObject) { // IE
+                    self.xmlHttpReq = new ActiveXObject("Microsoft.XMLHTTP");
+                }
+                self.xmlHttpReq.open('POST', strURL, true);
+                self.xmlHttpReq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                self.xmlHttpReq.onreadystatechange = function () {
+                    if (self.xmlHttpReq.readyState == 4) {
+                        updatepage(self.xmlHttpReq.responseText);
+                    }
+                }
+
+                var params = getstandardargs().concat(getquerystring());
+                var strData = params.join('&');
+                self.xmlHttpReq.send('facet.field=docType&facet=on&hl.fl=p&hl=on&q=p%3Aroads&rows=20&start=0');
+            }
+
+            function getstandardargs() {
+                var params = [
+                    'wt=json'
+                            , 'indent=on'
+                            , 'hl=true'
+                            , 'hl.fl=p'
+                ];
+
+                return params;
+            }
+            function getquerystring() {
+                var form = document.forms['f1'];
+                var query = form.query.value;
+                qstr = 'q=' + escape(query);
+                return qstr;
+            }
+var data;
+        // this function does all the work of parsing the solr response and updating the page.
+            function updatepage(str) {
+                data  = JSON.parse(str);
+                document.getElementById("raw").innerHTML = "<pre>"+str+"</pre>";
+                var rsp = JSON.parse(str); // use eval to parse Solr's JSON response
+                console.table(rsp.response.docs[0]);
+                var html = "<br>numFound=" + rsp.response.numFound;
+                var first = rsp.response.docs[0];
+                //html += "<br>Act name=" + first.title;
+                var hl = rsp.highlighting[first.id];
+                if (hl.docType != null) {
+                    html += "<br>name highlighted: " + hl.name[0];
+                }
+           
+                document.getElementById("result").innerHTML = "<pre>"+html+"</pre>";
+            }
+        </script>
+    </head>
+    <body>
+
+        <form name="f1" onsubmit='xmlhttpPost("https://127.0.0.1:9898/solr/legalmind/select");
+        return false;'>
+            <p>query: <input name="query" type="text">
+                <input value="Go" type="submit"></p>
+
+            <div id="result"></div>
+            <p/>Raw JSON String: <div id="raw"></div>
+</form>
+</body>
+</html>
