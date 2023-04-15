@@ -30,3 +30,4 @@ replay_pid*
 #IntelliJ#
 ##################
 *.idea
+*.netbeans_automatic_build
