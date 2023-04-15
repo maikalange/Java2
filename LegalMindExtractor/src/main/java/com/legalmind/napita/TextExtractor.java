@@ -5,6 +5,7 @@
  */
 package com.legalmind.napita;
 
+import com.legalmind.utils.ConfigHelper;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.FilenameFilter;
@@ -13,6 +14,7 @@ import java.io.PrintWriter;
 import java.io.Writer;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.util.Scanner;
@@ -31,7 +33,6 @@ import org.jsoup.nodes.Element;
  * @author jnj
  */
 public class TextExtractor {
-
     private static void generateHTMLFromPDF(String fileName) throws IOException, ParserConfigurationException {
         var sb = new StringBuilder(fileName);
         sb.replace(fileName.indexOf("pdf"), fileName.length(), "");
@@ -224,12 +225,16 @@ public class TextExtractor {
     }
 
     public static void main(String args[]) throws IOException, ParserConfigurationException {
-        //String dir = "C:\\Users\\jnj\\Documents\\Laws Zambia\\";
-        String dir2 = "C:\\sandbox\\judiciarydownloads\\causelist\\";
-        String[] x = getFilesByTypeInDir(dir2, "pdf");
-        for (String f : x) {
+      
+
+        ConfigHelper propertiesReader = new ConfigHelper("napita.properties");
+
+        String actspath = propertiesReader.getProperty("actsdir.path");
+        String causelistpath = propertiesReader.getProperty("causelistdir.path");
+        String[] fileNamesList = getFilesByTypeInDir(causelistpath, "pdf");
+        for (String filePath : fileNamesList) {
             //extractPlainTextFromPDF(dir + f, false,true);
-            extractPlainTextFromPDF(dir2 + f, false, true);
+            extractPlainTextFromPDF(causelistpath + filePath, false, true);
             //generateHTMLFromPDF(dir2 + f);
             //getTOCFromDocument(dir2 + f + ".txt");
         }
@@ -258,7 +263,7 @@ public class TextExtractor {
     private static void extractPlainTextFromPDF(String pdfFileName, boolean includePageNumber, boolean includeHtml) throws IOException {
         //Loading an existing PDF document
         File file = new File(pdfFileName);
-        try (org.apache.pdfbox.pdmodel.PDDocument document = PDDocument.load(file)) {            
+        try (org.apache.pdfbox.pdmodel.PDDocument document = PDDocument.load(file)) {
             int k = document.getNumberOfPages();
             //Instantiate PDFTextStripper class
             StringBuilder sb = new StringBuilder();
@@ -270,13 +275,13 @@ public class TextExtractor {
                 pdfStripper.setParagraphStart("<p>");
                 pdfStripper.setParagraphEnd("</p>");
                 pdfStripper.setPageStart("<div>");
-                pdfStripper.setPageEnd("</div>");                                
+                pdfStripper.setPageEnd("</div>");
             }
 
             for (int i = 1; i <= k; i++) {
                 pdfStripper.setStartPage(i);
                 pdfStripper.setEndPage(i);
-                
+
                 String text = pdfStripper.getText(document);
                 if (includePageNumber) {
                     sb.append("PageNo").append(i).append("\n\r").append(text).append("<hr/>").append("<br/>");
@@ -286,7 +291,7 @@ public class TextExtractor {
                 }
             }
             document.close();
-            createLegislationTextFile(sb.toString().replace("\r\n"," ").replace("\n"," "), pdfFileName, includeHtml);
+            createLegislationTextFile(sb.toString().replace("\r\n", " ").replace("\n", " "), pdfFileName, includeHtml);
         }
     }
 
@@ -307,10 +312,10 @@ public class TextExtractor {
     private static void createLegislationTextFile(String legislationContent, String pdfFileName, boolean includeHtml) throws IOException {
         saveTextToFile(pdfFileName.replace(".pdf", ""), removeHeadersFooters(legislationContent));
         if (legislationContent.contains("SUBSIDIARY LEGISLATION")) {
-            var legs  = legislationContent.split("SUBSIDIARY LEGISLATION");
+            var legs = legislationContent.split("SUBSIDIARY LEGISLATION");
             //create new file for each subsidiary legislation
             for (int i = 1; i < legs.length; i++) {
-                saveTextToFile(pdfFileName.replace(".pdf", String.format("_SUBS_%d",i)), removeHeadersFooters(legs[i]));
+                saveTextToFile(pdfFileName.replace(".pdf", String.format("_SUBS_%d", i)), removeHeadersFooters(legs[i]));
             }
         }
     }
