@@ -12,15 +12,6 @@
         <maven.compiler.target>16</maven.compiler.target>
     </properties>
     <build>
-<!--        <resources>
-            <resource>
-                <directory>src/main/java/com/legalmind/napita/resources</directory>
-                <includes>
-                    <include>napita.properties</include>
-                </includes>
-                <targetPath>com/legalmind/utils</targetPath>
-            </resource>
-        </resources>-->
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
