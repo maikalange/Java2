@@ -1,0 +1,17 @@
+C:\sandbox\Java2\LegalMindExtractor\src\main\java\com\legalmind\napita\HtmlPageSplitter.java
+C:\sandbox\Java2\LegalMindExtractor\src\main\java\com\legalmind\domain\Section.java
+C:\sandbox\Java2\LegalMindExtractor\src\main\java\com\legalmind\domain\TableOfContentItem.java
+C:\sandbox\Java2\LegalMindExtractor\src\main\java\com\legalmind\cms\MyTextExtractionStrategy.java
+C:\sandbox\Java2\LegalMindExtractor\src\main\java\com\legalmind\napita\PageSectionsGenerator.java
+C:\sandbox\Java2\LegalMindExtractor\src\main\java\com\legalmind\domain\Page.java
+C:\sandbox\Java2\LegalMindExtractor\src\main\java\com\legalmind\napita\AlphabeticalIndexGenerator.java
+C:\sandbox\Java2\LegalMindExtractor\src\main\java\com\legalmind\api\Page.java
+C:\sandbox\Java2\LegalMindExtractor\src\main\java\com\legalmind\api\Act.java
+C:\sandbox\Java2\LegalMindExtractor\src\main\java\com\legalmind\utils\ConfigHelper.java
+C:\sandbox\Java2\LegalMindExtractor\src\main\java\com\legalmind\napita\TextExtractor.java
+C:\sandbox\Java2\LegalMindExtractor\src\main\java\com\legalmind\api\Section.java
+C:\sandbox\Java2\LegalMindExtractor\src\main\java\com\legalmind\domain\TableOfContent.java
+C:\sandbox\Java2\LegalMindExtractor\src\main\java\com\legalmind\cms\PDFToWordConverter.java
+C:\sandbox\Java2\LegalMindExtractor\src\main\java\com\legalmind\ocr\OCRProcessor.java
+C:\sandbox\Java2\LegalMindExtractor\src\main\java\com\legalmind\api\JSONGenerator.java
+C:\sandbox\Java2\LegalMindExtractor\src\main\java\com\legalmind\napita\TocExtractor.java

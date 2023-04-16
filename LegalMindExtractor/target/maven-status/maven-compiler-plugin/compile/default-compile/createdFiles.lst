@@ -1,0 +1,17 @@
+com\legalmind\cms\MyTextExtractionStrategy.class
+com\legalmind\domain\Page.class
+com\legalmind\utils\ConfigHelper.class
+com\legalmind\napita\PageSectionsGenerator.class
+com\legalmind\cms\PDFToWordConverter.class
+com\legalmind\napita\HtmlPageSplitter.class
+com\legalmind\domain\TableOfContent.class
+com\legalmind\napita\TextExtractor.class
+com\legalmind\api\Section.class
+com\legalmind\api\Act.class
+com\legalmind\napita\AlphabeticalIndexGenerator.class
+com\legalmind\domain\TableOfContentItem.class
+com\legalmind\api\Page.class
+com\legalmind\domain\Section.class
+com\legalmind\api\JSONGenerator.class
+com\legalmind\ocr\OCRProcessor.class
+com\legalmind\napita\TocExtractor.class
