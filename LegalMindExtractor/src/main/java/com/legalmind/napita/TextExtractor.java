@@ -14,10 +14,12 @@ import java.io.PrintWriter;
 import java.io.Writer;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
+import java.util.List;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.xml.parsers.ParserConfigurationException;
@@ -33,13 +35,14 @@ import org.jsoup.nodes.Element;
  * @author jnj
  */
 public class TextExtractor {
+
     private static void generateHTMLFromPDF(String fileName) throws IOException, ParserConfigurationException {
         var sb = new StringBuilder(fileName);
         sb.replace(fileName.indexOf("pdf"), fileName.length(), "");
         try (PDDocument pdf = PDDocument.load(new File(fileName))) {
-            Writer output = new PrintWriter(sb.toString() + "html", "utf-8");
-            new PDFDomTree().writeText(pdf, output);
-            output.close();
+            try (Writer output = new PrintWriter(sb.toString() + "html", "utf-8")) {
+                new PDFDomTree().writeText(pdf, output);
+            }
             pdf.close();
         }
     }
@@ -223,27 +226,41 @@ public class TextExtractor {
             sc.close();
         }
     }
+    private static final ConfigHelper propertiesReader = new ConfigHelper("napita.properties");
 
     public static void main(String args[]) throws IOException, ParserConfigurationException {
-      
-
-        ConfigHelper propertiesReader = new ConfigHelper("napita.properties");
 
         String actspath = propertiesReader.getProperty("actsdir.path");
         String causelistpath = propertiesReader.getProperty("causelistdir.path");
-        String[] fileNamesList = getFilesByTypeInDir(causelistpath, "pdf");
-        for (String filePath : fileNamesList) {
-            //extractPlainTextFromPDF(dir + f, false,true);
-            extractPlainTextFromPDF(causelistpath + filePath, false, true);
-            //generateHTMLFromPDF(dir2 + f);
-            //getTOCFromDocument(dir2 + f + ".txt");
-        }
-        //Generate Document Sections
-//        String[] htmlFiles = getFilesByTypeInDir(dir2, "html");
-//        for (String file : htmlFiles) {
-//            HtmlPageSplitter.splitHtmlDocument(file, dir2);
-//        }
-//        AlphabeticalIndexGenerator.createAlphabeticalIndexOfActs(dir2);
+
+        List.of(getFilesByTypeInDir(actspath, "pdf")).forEach((fileName) -> {
+            try {
+                var fullPath = actspath + fileName;
+                extractPlainTextFromPDF(fullPath, false, true);
+                generateHTMLFromPDF(fullPath);
+                getTOCFromDocument(fullPath + ".txt");
+            } catch (IOException | ParserConfigurationException ex) {
+                Logger.getLogger(TextExtractor.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        });
+
+        List.of(getFilesByTypeInDir(causelistpath, "pdf")).forEach(fileName -> {
+            try {
+                extractPlainTextFromPDF(causelistpath + fileName, false, true);
+            } catch (IOException ex) {
+                Logger.getLogger(TextExtractor.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        });
+
+        List.of(getFilesByTypeInDir(actspath, "html")).forEach(filePath -> {
+            try {
+                HtmlPageSplitter.splitHtmlDocument(filePath, actspath);
+            } catch (IOException ex) {
+                Logger.getLogger(TextExtractor.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+        });
+        AlphabeticalIndexGenerator.createAlphabeticalIndexOfActs(actspath);
     }
 
     public static String[] getFilesByTypeInDir(String dirPath, String fileType) {
@@ -255,8 +272,8 @@ public class TextExtractor {
     }
 
     private static String removeHeadersFooters(String content) {
-        var footer1 = "The Laws of Zambia";
-        var footer2 = "Copyright Ministry of Legal Affairs, Government of the Republic of Zambia";
+        var footer1 = propertiesReader.getProperty("footer1");
+        var footer2 = propertiesReader.getProperty("footer2");;
         return content.replace(footer1, "").replace(footer2, "");
     }
 

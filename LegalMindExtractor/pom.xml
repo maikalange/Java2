@@ -12,7 +12,7 @@
         <maven.compiler.target>16</maven.compiler.target>
     </properties>
     <build>
-        <resources>
+<!--        <resources>
             <resource>
                 <directory>src/main/java/com/legalmind/napita/resources</directory>
                 <includes>
@@ -20,7 +20,33 @@
                 </includes>
                 <targetPath>com/legalmind/utils</targetPath>
             </resource>
-        </resources>
+        </resources>-->
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.2.0</version>
+                <executions>
+                    <execution>
+                        <id>copy-resources</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.outputDirectory}</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>/src/main/java/com/legalmind/napita/resources</directory>
+                                    <filtering>true</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+        </plugins>
         
     </build>
     <!--       <repositories>    
