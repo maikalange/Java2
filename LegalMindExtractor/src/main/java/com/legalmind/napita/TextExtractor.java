@@ -191,7 +191,7 @@ public class TextExtractor {
                 }
             }
             document.close();
-            createLegislationTextFile(sb.toString().replace("\r\n", " ").replace("\n", " "), pdfFileName, includeHtml);
+            createLegislationTextFile(sb.toString().replace("\r\n", " ").replace("\n", " "), pdfFileName);
         }
     }
 
@@ -209,7 +209,7 @@ public class TextExtractor {
         return matchCount;
     }
 
-    private static void createLegislationTextFile(String legislationContent, String pdfFileName, boolean includeHtml) throws IOException {
+    private static void createLegislationTextFile(String legislationContent, String pdfFileName) throws IOException {
         saveTextToFile(pdfFileName.replace(".pdf", ""), removeHeadersFooters(legislationContent));
         if (legislationContent.contains("SUBSIDIARY LEGISLATION")) {
             var legs = legislationContent.split("SUBSIDIARY LEGISLATION");
